@@ -1,6 +1,6 @@
 package com.microservice.fraud.controller;
 
-import com.microservice.fraud.entity.FraudResponse;
+import com.microservice.client.fraud.FraudResponse;
 import com.microservice.fraud.service.FraudService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ public class FraudController {
 
     @GetMapping("/{customerId}")
     public FraudResponse isFraudCustomer(@PathVariable("customerId") Long customerId) {
-        return new FraudResponse(fraudService.isFraudCustomer(customerId));
+        return fraudService.isFraudCustomer(customerId);
     }
 
 }

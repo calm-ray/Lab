@@ -1,5 +1,6 @@
 package com.microservice.fraud.service;
 
+import com.microservice.client.fraud.FraudResponse;
 import com.microservice.fraud.entity.Fraud;
 import com.microservice.fraud.repository.FraudRepository;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ public class FraudService {
 
     private final FraudRepository fraudRepository;
 
-    public Boolean isFraudCustomer(Long customerId) {
+    public FraudResponse isFraudCustomer(Long customerId) {
         Fraud fraud = Fraud.builder()
                 .customerId(customerId)
                 .isFraudster(false)
@@ -21,6 +22,6 @@ public class FraudService {
                 .build();
 
         fraudRepository.save(fraud);
-        return false;
+        return new FraudResponse(false);
     }
 }

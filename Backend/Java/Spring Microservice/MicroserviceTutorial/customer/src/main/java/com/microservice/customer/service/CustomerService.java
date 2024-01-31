@@ -1,8 +1,9 @@
 package com.microservice.customer.service;
 
+import com.microservice.client.fraud.FraudClient;
+import com.microservice.client.fraud.FraudResponse;
 import com.microservice.customer.entity.Customer;
 import com.microservice.customer.entity.CustomerRequest;
-import com.microservice.customer.entity.FraudResponse;
 import com.microservice.customer.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private final RestTemplate restTemplate;
+//    private final RestTemplate restTemplate;
+    private final FraudClient fraudClient;
 
     public void registerCustomer(CustomerRequest customerRequest) {
         Customer customer = Customer.builder()
@@ -25,11 +27,13 @@ public class CustomerService {
 
         customerRepository.saveAndFlush(customer);
 
-        FraudResponse fraudResponse = restTemplate.getForObject(
-                "http://FRAUD/api/v1/fraud/{customerId}",
-                FraudResponse.class,
-                customer.getId()
-        );
+//        FraudResponse fraudResponse = restTemplate.getForObject(
+//                "http://FRAUD/api/v1/fraud/{customerId}",
+//                FraudResponse.class,
+//                customer.getId()
+//        );
+
+        FraudResponse fraudResponse = fraudClient.isFraudCustomer(customer.getId());
 
         assert fraudResponse != null;
         if(fraudResponse.isFraudster()) {
