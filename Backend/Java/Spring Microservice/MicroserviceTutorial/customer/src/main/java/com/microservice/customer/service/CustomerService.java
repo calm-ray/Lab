@@ -2,9 +2,11 @@ package com.microservice.customer.service;
 
 import com.microservice.customer.entity.Customer;
 import com.microservice.customer.entity.CustomerRequest;
+import com.microservice.customer.entity.FraudResponse;
 import com.microservice.customer.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
+    private final RestTemplate restTemplate;
 
     public void registerCustomer(CustomerRequest customerRequest) {
         Customer customer = Customer.builder()
@@ -20,7 +23,18 @@ public class CustomerService {
                 .email(customerRequest.email())
                 .build();
 
-        customerRepository.save(customer);
+        customerRepository.saveAndFlush(customer);
+
+        FraudResponse fraudResponse = restTemplate.getForObject(
+                "http://FRAUD/api/v1/fraud/{customerId}",
+                FraudResponse.class,
+                customer.getId()
+        );
+
+        assert fraudResponse != null;
+        if(fraudResponse.isFraudster()) {
+            throw new IllegalStateException("Fraudster!");
+        }
     }
 
     public List<Customer> getCustomers() {
