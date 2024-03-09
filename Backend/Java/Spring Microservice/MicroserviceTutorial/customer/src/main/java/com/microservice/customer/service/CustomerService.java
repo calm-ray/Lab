@@ -2,6 +2,8 @@ package com.microservice.customer.service;
 
 import com.microservice.client.fraud.FraudClient;
 import com.microservice.client.fraud.FraudResponse;
+import com.microservice.client.notification.NotificationClient;
+import com.microservice.client.notification.NotificationRequest;
 import com.microservice.customer.entity.Customer;
 import com.microservice.customer.entity.CustomerRequest;
 import com.microservice.customer.repository.CustomerRepository;
@@ -17,6 +19,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 //    private final RestTemplate restTemplate;
     private final FraudClient fraudClient;
+    private final NotificationClient notificationClient;
 
     public void registerCustomer(CustomerRequest customerRequest) {
         Customer customer = Customer.builder()
@@ -39,6 +42,14 @@ public class CustomerService {
         if(fraudResponse.isFraudster()) {
             throw new IllegalStateException("Fraudster!");
         }
+
+        notificationClient.sendNotifications(
+                new NotificationRequest(
+                        String.format("Hi %s! Happy Coding!!", customer.getFirstName()),
+                        customer.getId(),
+                        customer.getEmail()
+                )
+        );
     }
 
     public List<Customer> getCustomers() {
