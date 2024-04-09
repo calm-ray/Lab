@@ -1,5 +1,6 @@
 package com.microservice.customer.service;
 
+import com.microservice.customer.messaging.RabbitMQProducer;
 import com.microservice.client.fraud.FraudClient;
 import com.microservice.client.fraud.FraudResponse;
 import com.microservice.client.notification.NotificationClient;
@@ -8,11 +9,8 @@ import com.microservice.customer.entity.Customer;
 import com.microservice.customer.entity.CustomerRequest;
 import com.microservice.customer.repository.CustomerRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -23,6 +21,7 @@ public class CustomerService {
 //    private final RestTemplate restTemplate;
     private final FraudClient fraudClient;
     private final NotificationClient notificationClient;
+    private final RabbitMQProducer messageProducer;
 
     @CircuitBreaker(name="customerCircuitBreaker", fallbackMethod = "fallback")
 //    @Retry(name="customerRetry")
@@ -49,13 +48,19 @@ public class CustomerService {
             throw new IllegalStateException("Fraudster!");
         }
 
-        notificationClient.sendNotifications(
-                new NotificationRequest(
-                        String.format("Hi %s! Happy Coding!!", customer.getFirstName()),
-                        customer.getId(),
-                        customer.getEmail()
-                )
+//        notificationClient.sendNotifications(
+//                new NotificationRequest(
+//                        String.format("Hi %s! Happy Coding!!", customer.getFirstName()),
+//                        customer.getId(),
+//                        customer.getEmail()
+//                )
+//        );
+        NotificationRequest notificationRequest = new NotificationRequest(
+                String.format("Hi %s! Happy Coding!!", customer.getFirstName()),
+                customer.getId(),
+                customer.getEmail()
         );
+        messageProducer.publish(notificationRequest);
     }
 
     public void fallback(CustomerRequest customerRequest, Exception e) {

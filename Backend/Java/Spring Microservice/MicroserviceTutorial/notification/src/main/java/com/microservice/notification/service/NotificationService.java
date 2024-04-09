@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
 
+
     public void sendNotifications(NotificationRequest notificationRequest) {
         Notification notification = Notification.builder()
                 .message(notificationRequest.message())

@@ -38,22 +38,22 @@ management:
       show-details: always
 
 # Resilience4j Circuit Breaker Pattern
-#resilience4j:
-#  circuitbreaker:
-#    configs:
-#      default:
-#        register-health-indicator: true
-#        sliding-window-size: 10
-#        sliding-window-type: count_based
-#        permitted-number-of-calls-in-half-open-state: 3
-#        minimum-number-of-calls: 5
-#        wait-duration-in-open-state:
-#          seconds: 5
-#        writable-stack-trace-enabled: true
-#        automatic-transition-from-open-to-half-open-enabled: true
-#    instances:
-#      customerCircuitBreaker:
-#        base-config: default
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-size: 10
+        sliding-window-type: count_based
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        wait-duration-in-open-state:
+          seconds: 5
+        writable-stack-trace-enabled: true
+        automatic-transition-from-open-to-half-open-enabled: true
+    instances:
+      customerCircuitBreaker:
+        base-config: default
 
 # Resilience4j configuration for Retry Pattern
 #resilience4j:
@@ -68,13 +68,13 @@ management:
 #        base-config: default
 
 # Resilience4j for RateLimiter Pattern
-resilience4j:
-  ratelimiter:
-    configs:
-      default:
-        timeoutDuration: 0
-        limitRefreshPeriod: 4s
-        limitForPeriod: 2
-    instances:
-      customerRateLimiter:
-        base-config: default
+#resilience4j:
+#  ratelimiter:
+#    configs:
+#      default:
+#        timeoutDuration: 0
+#        limitRefreshPeriod: 4s
+#        limitForPeriod: 2
+#    instances:
+#      customerRateLimiter:
+#        base-config: default
