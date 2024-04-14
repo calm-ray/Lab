@@ -13,7 +13,7 @@ spring:
             predicates:
               - Path=/api/v1/customer/**
           - id: eureka-server
-            uri: http://localhost:8761
+            uri: http://eureka-server:8761
             predicates:
               - Path=/eureka/**
             filters:
@@ -21,7 +21,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 
 management:
   tracing:
@@ -29,5 +29,5 @@ management:
       probability: 1.0
   zipkin:
     tracing:
-      endpoint: http://localhost:9411/api/v2/spans
+      endpoint: http://zipkin:9411/api/v2/spans
 

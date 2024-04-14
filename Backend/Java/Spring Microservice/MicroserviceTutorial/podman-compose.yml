@@ -31,6 +31,8 @@ services:
     container_name: zipkin
     ports:
       - "9411:9411"
+    networks:
+      - spring
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -38,11 +40,86 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - spring
 
+  eureka-server:
+    image: calmray/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=podman
+    depends_on:
+      - zipkin
+
+  api-gateway:
+    image: calmray/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8084:8084"
+    networks:
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=podman
+    depends_on:
+      - zipkin
+      - eureka-server
+
+  customer:
+    image: calmray/customer:latest
+    container_name: customer
+    ports:
+      - "8080:8080"
+    networks:
+      - spring
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=podman
+    depends_on:
+      - postgres
+      - eureka-server
+      - zipkin
+      - rabbitmq
+
+  fraud:
+    image: calmray/fraud:latest
+    container_name: fraud
+    ports:
+      - "8081:8081"
+    networks:
+      - spring
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=podman
+    depends_on:
+      - postgres
+      - eureka-server
+      - zipkin
+      - rabbitmq
+
+  notification:
+    image: calmray/notification:latest
+    container_name: notification
+    ports:
+      - "8082:8082"
+    networks:
+      - postgres
+      - spring
+    environment:
+      - SPRING_PROFILES_ACTIVE=podman
+    depends_on:
+      - postgres
+      - eureka-server
+      - zipkin
+      - rabbitmq
 networks:
   postgres:
     driver: bridge
-
+  spring:
+    driver: bridge
 volumes:
   postgres:
   pgadmin:
