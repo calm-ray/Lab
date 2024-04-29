@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/customer
     username: root
-    password: root
+    password: myPassword
   jpa:
     properties:
       hibernate:
@@ -21,6 +21,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+    enabled: false # change it to true if not using k8s
 
 management:
   tracing:

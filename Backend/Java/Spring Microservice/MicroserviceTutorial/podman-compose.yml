@@ -3,7 +3,7 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: myPassword
       PGDATA: /data/postgres
     ports:
       - "5432:5432"
@@ -43,30 +43,30 @@ services:
     networks:
       - spring
 
-  eureka-server:
-    image: calmray/eureka-server:latest
-    container_name: eureka-server
-    ports:
-      - "8761:8761"
-    networks:
-      - spring
-    environment:
-      - SPRING_PROFILES_ACTIVE=podman
-    depends_on:
-      - zipkin
-
-  api-gateway:
-    image: calmray/api-gateway:latest
-    container_name: api-gateway
-    ports:
-      - "8084:8084"
-    networks:
-      - spring
-    environment:
-      - SPRING_PROFILES_ACTIVE=podman
-    depends_on:
-      - zipkin
-      - eureka-server
+#  eureka-server:
+#    image: calmray/eureka-server:latest
+#    container_name: eureka-server
+#    ports:
+#      - "8761:8761"
+#    networks:
+#      - spring
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=podman
+#    depends_on:
+#      - zipkin
+#
+#  api-gateway:
+#    image: calmray/api-gateway:latest
+#    container_name: api-gateway
+#    ports:
+#      - "8084:8084"
+#    networks:
+#      - spring
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=podman
+#    depends_on:
+#      - zipkin
+#      - eureka-server
 
   customer:
     image: calmray/customer:latest
@@ -80,7 +80,7 @@ services:
       - SPRING_PROFILES_ACTIVE=podman
     depends_on:
       - postgres
-      - eureka-server
+#      - eureka-server
       - zipkin
       - rabbitmq
 
@@ -96,7 +96,7 @@ services:
       - SPRING_PROFILES_ACTIVE=podman
     depends_on:
       - postgres
-      - eureka-server
+#      - eureka-server
       - zipkin
       - rabbitmq
 
@@ -112,7 +112,7 @@ services:
       - SPRING_PROFILES_ACTIVE=podman
     depends_on:
       - postgres
-      - eureka-server
+#      - eureka-server
       - zipkin
       - rabbitmq
 networks:
